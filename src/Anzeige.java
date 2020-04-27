@@ -1,4 +1,5 @@
 public class Anzeige {
+	//test 2
 	final static int X = 12;
 	final static int Y = 16;
 	private char[][] anzeige = new char[X][Y];
