@@ -16,4 +16,5 @@ public class MineFrame extends JFrame{
 		MineFrame frame = new MineFrame();
 		
 	}
+	//test
 }
