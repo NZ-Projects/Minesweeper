@@ -13,7 +13,6 @@ public class MineFrame extends JFrame{
 	}
 	
 	public static void main(String[] args) {	
-		MineFrame frame = new MineFrame();
-		
+		MineFrame frame = new MineFrame();		
 	}
 }

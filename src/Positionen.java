@@ -1,6 +1,6 @@
 
 public class Positionen {
-	static final int MINEN = 8;
+	static final int MINEN = 4;
 	private Mine[] arrayOfMines = new Mine[MINEN];
 
 	public Positionen() {

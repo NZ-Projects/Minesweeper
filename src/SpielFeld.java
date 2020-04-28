@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;  
@@ -9,29 +11,44 @@ import java.util.*;
 import javax.swing.JPanel;
 
 
-public class SpielFeld extends JPanel implements MouseListener {
+public class SpielFeld extends JPanel implements MouseListener,  ComponentListener{
 	private static final long serialVersionUID = 1L;
 	private Spiel mySpiel = new Spiel();	
 	private int mousePressX = 0;
 	private int mousePresseY = 0;
 	
 	private boolean gameOver = false;
+	private boolean gameWon = false;
+	
 	private ArrayList<Mine> JPanelMines = new ArrayList<Mine>(Positionen.MINEN);
 	private ArrayList<Mine> JPanelLeers = new ArrayList<Mine>(Anzeige.X*Anzeige.Y - Positionen.MINEN);
 	private boolean [][] clickedAnzeige = new boolean[Anzeige.X][Anzeige.Y]; 
+	
+	private int width, height;
 
 	public SpielFeld() {
 		this.addMouseListener(this);
+		this.addComponentListener(this);
 	}
 
 	public void paint(Graphics gr) {
+		this.width = getWidth();
+		this.height = getHeight();
+		
 		super.paint(gr);
-		gr.setColor(Color.red);
+		gr.setColor(Color.black);
 		enableAA(gr);
 		drawField(gr);
 		
-		if (this.gameOver)
+		if (this.gameOver) {
 			drawMines(gr);
+			setBackground(Color.red);
+		}
+		
+		if (this.gameWon) {
+			drawMines(gr);
+			setBackground(Color.green);
+		}
 	}
 		
 	private void drawField(Graphics myGraphic) {
@@ -73,12 +90,11 @@ public class SpielFeld extends JPanel implements MouseListener {
 			int x = mine.getX() * (squareWidth) + (squareWidth / 2);
 			int y = (mine.getY() + 1) * (squareHeight) - (squareHeight / 2);
 			
-			String str = String.valueOf(mySpiel.MINE);
-			myGraphic.drawString(str, x, y);
+			myGraphic.fillOval(x, y, 10, 10);
 		}
 	}
 	
-	private boolean isMine(int x, int y) {
+	private boolean IsMine(int x, int y) {
 		int squareWidth = getWidth() / Anzeige.X;
 		int squareHeight = getHeight() / Anzeige.Y;
 		
@@ -95,14 +111,29 @@ public class SpielFeld extends JPanel implements MouseListener {
 		
 		return false;
 	}
+	
+	private boolean IsWon() {
+		int counter = 0;
+		for (int i=0; i<this.clickedAnzeige.length; i++) {
+			for(int j=0; j<this.clickedAnzeige[i].length; j++)
+			if (!this.clickedAnzeige[i][j]) {
+				counter++;
+			}			
+		}
+		
+		if(counter==Positionen.MINEN)
+			return true;
+		
+		return false;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(!this.gameOver) {
+		if(!this.gameOver && !this.gameWon) {
 			this.mousePressX = e.getX();
 			this.mousePresseY = e.getY();
 
-			if(isMine(this.mousePressX, this.mousePresseY)) {
+			if(IsMine(this.mousePressX, this.mousePresseY)) {
 				this.gameOver = true;
 			}
 			else {
@@ -119,14 +150,39 @@ public class SpielFeld extends JPanel implements MouseListener {
 							&& (minY<=this.mousePresseY && this.mousePresseY<=maxY)) {
 						
 						int x = minX / (squareWidth);
-						int y = minY / (squareHeight);	
-						System.out.println(x + "," + y);
+						int y = minY / (squareHeight);
 						this.clickedAnzeige[x][y] = true;		
 					}			
 				}
+				
+				if(IsWon())
+					this.gameWon = true;
 			}	
 		}
 		repaint();
+	}
+	
+	@Override
+	public void componentResized(ComponentEvent e) {
+		int squareWidth = getWidth() / Anzeige.X, squareHeight = getHeight() / Anzeige.Y;
+		
+		for(int i=0; i<this.JPanelMines.size(); i++) {			
+			int x = this.JPanelMines.get(i).getX() / this.width;
+			int y = this.JPanelMines.get(i).getY() / this.height;
+			
+			x = x * (squareWidth);
+			y = y * (squareHeight);
+			this.JPanelMines.set(i, new Mine(x, y));	
+		}
+		
+		for(int i=0; i<this.JPanelLeers.size(); i++) {			
+			int x = this.JPanelLeers.get(i).getX() / this.width;
+			int y = this.JPanelLeers.get(i).getY() / this.height;
+			
+			x = x * (squareWidth);
+			y = y * (squareHeight);
+			this.JPanelLeers.set(i, new Mine(x, y));	
+		}
 	}
 
 	private void enableAA(Graphics g) {
@@ -172,11 +228,22 @@ public class SpielFeld extends JPanel implements MouseListener {
 
 	}
 
-}
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
-// l idee li 3ndi hia n9ado f depart tableau li fih min w max dial kola point fih mine, apres ghadinparcouriw hadak tableau w nchofo wach
-// les coordonees dial la souris x w y kynin wst min w max la kano rah mine la makanoch rach machi mine .
-// eetape suivante hia nchofo les données li 3ndna lihom access men had classe meinJpanel w nchofo chno n9dro ndiro bihom
-// 7na bghina n9ado tablea dial les mines 79i9iyin donc khasna tableau li fih les mines 3adiyin bach ntbazaw 3lih ok?
-// hadak tableau dial mine 3adiyin private donc man9drouch nst3ml
-// mais 7na deja kanrsmo les mines fach kanrsmoh f panel
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
