@@ -1,4 +1,3 @@
-
 public class Mine {
 	private int xPosition;
 	private int yPosition;

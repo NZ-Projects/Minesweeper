@@ -1,4 +1,3 @@
-
 public class Spiel extends Anzeige {
 	private Positionen minenPositionen = new Positionen();
 

@@ -1,4 +1,3 @@
-
 public class Positionen {
 	public static final int MINEN = 8;
 	private Mine[] arrayOfMines = new Mine[MINEN];
