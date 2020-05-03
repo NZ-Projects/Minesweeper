@@ -14,8 +14,6 @@ public class Mine {
 	public int getY() {
 		return this.yPosition;
 	}
-	// kein set(), weil wir die x-y Positionen durch den Konstructor Mine(int x, int
-	// y) eingeben
 
 	public boolean istAnPosition(Mine mine) {
 		return mine.equals(this);
