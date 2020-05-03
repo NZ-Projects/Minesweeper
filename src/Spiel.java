@@ -4,7 +4,7 @@ public class Spiel extends Anzeige {
 
 	public Spiel() {
 		super();
-		for (int i = 0; i < minenPositionen.MINEN; i++) {
+		for (int i = 0; i < Positionen.MINEN; i++) {
 			this.set(minenPositionen.get(i).getX(), minenPositionen.get(i).getY(), MINE);
 		}
 	}
